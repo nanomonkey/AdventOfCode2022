@@ -89,23 +89,16 @@ Find the item type that corresponds to the badges of each three-Elf group. What 
 
 #+begin_src babashka :results raw
   (def input (str/split-lines (slurp "day3.txt")))
-   
-  (def example "vJrwpWtwJgWrhcsFMMfFFhFp
-  jqHRNqRjqzjGDLGLrsFMfFZSrLrFZsSL
-  PmmdzqPrVvPwwTWBwg
-  wMqvLMZHhHMvwLHjbvcjnnSBnvTQFn
-  ttgJtRGJQctTZtZT
-  CrZsJsPPZsGzwwsLwLmpwMDw")
-
-  (defn shared-items [compartments]
-    (let [half (/ (count compartments) 2)
-          [first-half second-half] (split-at half compartments)]
-      (clojure.set/intersection (set first-half) (set second-half))))
 
   (defn priority [item]
     (+ 1 (str/index-of "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ" item)))
 
-  ;(reduce + (map priority (for [compartment (str/split-lines example)] (first (shared-items compartment)))))
-
-  (reduce + (map priority (for [compartment input] (first (shared-items compartment)))))
+  (reduce +
+          (map priority 
+               (map first
+                    (map #(apply clojure.set/intersection %) 
+                         (partition 3 (map set input))))))
 #+end_src
+
+#+RESULTS:
+2581
